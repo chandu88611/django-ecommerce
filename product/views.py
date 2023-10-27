@@ -8,11 +8,36 @@ from rest_framework import status
 from .models import Product
 from .filters import ProductFilter
 # Create your views here.
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])  # Ensure the user is authenticated
+def create_product(request):
+    try:
+        serializer = ProductSerializer(data=request.data)
+        if serializer.is_valid():
+            product=Product.objects.create(**request.data,user=request.user)
+            res=ProductSerializer(product,many=False)
+            response_data = {
+                "message": "Product created successfully",
+                "status": True,
+                "data":res.data
+            }
+            return Response(response_data, status=status.HTTP_201_CREATED)
+        else:
+            response_data = {
+                "message": "Product creation failed",
+                "errors": serializer.errors,
+                "status": False
+            }
+            return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        response_data = {
+            "message": f"Product creation failed: {str(e)}",
+            "status": False
+        }
+        return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
 def get_products(request):
-    # products = Product.objects.all()
-    # serializer = ProductSerializer(products, many=True)
     filterset=ProductFilter(request.GET,queryset=Product.objects.all().order_by("id"))
     perpage=2
     paginator=PageNumberPagination()
