@@ -11,8 +11,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import os
-import dotenv
 from pathlib import Path
+import dotenv
 from datetime import timedelta
 dotenv.read_dotenv()
 
@@ -35,7 +35,7 @@ DEBUG = os.environ.get('DEBUG') == 'True'
 # SECURITY WARNING: keep the secret key used in production secret!
 
 
-ALLOWED_HOSTS = ["localhost"]
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'product.apps.ProductConfig',
+    'account.apps.AccountConfig',
     'django_filters'
 ]
 
